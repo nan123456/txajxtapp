@@ -41,7 +41,9 @@
 </div>
 <script>
 	var gcid = window.opener.document.getElementById("gcid").value;
-//	alert(gcid);
+	var jwd = window.opener.document.getElementById("jwd").value;
+	var flag = window.opener.document.getElementById("flg").value;
+//	alert(jwd);
 	var path = {};
     //缩放地图看看！！！
     var map = new AMap.Map('container', {
@@ -139,7 +141,19 @@
 
    })
 
-   
+   if(flag == "xiugai"){
+// 	alert(1)
+        arr = jwd.split(",");
+//      alert(arr[0]);
+        var marker1 = new AMap.Marker({
+        	icon:"http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+        	position:[arr[0],arr[1]]
+        })
+        marker1.setMap(map);
+        marker1.moveAlong(lineArr,speed);
+//      var lnglat = new AMap.LngLat(jwd);
+//      var pixel = map.lngLatToContainer(lnglat);
+   }
 </script>
 
 </body>
