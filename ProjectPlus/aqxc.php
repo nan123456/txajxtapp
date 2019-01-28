@@ -52,6 +52,28 @@
 	   		margin-left: auto;
 	   		background: #FFFFFF;
 	  	}
+	  	
+	  	.selWxy3{
+	  		display: none
+	  	}
+	  	
+	  	#save10{
+	  		position: relative;
+	  		left: 90%;
+	  		/*top: 10%;*/
+	  	}
+	  	
+	  	#save11{
+	  		position: relative;
+	  		left: 90%;
+	  		/*top: 10%;*/
+	  	}
+	  	
+	  	#guanbi{
+	  		position: relative;
+	  		right: 15%;
+	  		bottom: -32px;
+	  	}
 		</style>
     <link rel="icon" href="">
     	
@@ -169,22 +191,15 @@
 								
 									<div class="panel-body">
 										<div class="btn-group">
-											<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal1" ><i class="glyphicon glyphicon-plus"> 新建</i></button>
+											<button type="button" id="xinjian" class="btn btn-default" data-toggle="modal" data-target="#myModal1" ><i class="glyphicon glyphicon-plus"> 新建</i></button>
 											<div class="btn-group">
-												<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+												<!--<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 													危险源类别
 													<span class="caret"></span>
-												</button>
-												<ul class=" dropdown-menu" role="menu" aria-labelledby="dropdownMenu1" >
-													<li class="lii"><a href="#aqx7"  tabindex="-1" data-toggle="tab">全部类型</a></li>
-													<li class="lii"><a href="#aqx0" tabindex="-1" data-toggle="tab" >基坑支护及降水工程</a></li>
-													<li class="lii"><a href="#aqx1"  tabindex="-1" tabindex="-1" data-toggle="tab" >土方开挖工程</a></li>
-													<li class="lii"><a href="#aqx2"  tabindex="-1" data-toggle="tab">模板工程支撑体系</a></li>
-													<li class="lii"><a href="#aqx3"  tabindex="-1" data-toggle="tab">脚手架工程</a></li>
-													<li class="lii"><a href="#aqx4"  tabindex="-1" data-toggle="tab">起重吊装及安装拆卸工程</a></li>
-													<li class="lii"><a href="#aqx5"  tabindex="-1" data-toggle="tab">拆除爆破工程</a></li>
-													<li class="lii"><a href="#aqx6"  tabindex="-1" data-toggle="tab">其他危险性较大的工程</a></li>
-												</ul>
+												</button>-->
+												
+												
+												
 										  </div>
 										  <button type="button" class="btn btn-default" data-toggle="modal" onclick="window.open('ewmdy.php')">生成二维码</button>
 										  <div class="btn-group">
@@ -198,7 +213,29 @@
 													<li class="lii" onclick="dy()"><a href="#" tabindex="-1" data-toggle="tab">类别类型</a></li>
 												</ul>
 										  </div>
+										  <form action="#" method="post" name="form3" id="form3" style="position: relative;left:374px ;bottom: 30px;">
+			                     <label for="classname">危险源类别：</label>&nbsp;
+			                    <!--<input type="text" style="height: 30px;">-->
+			                    	<?php
+													$sql = "SELECT 分项工程 FROM  `风险分类` GROUP BY 分项工程";
+				                	$result = $conn->query($sql);
+//				                	echo "<li class=\"lii\">";
+				                 	echo "<select id=\"classname\" name=\"classname\" style=\"height:30px\">";
+			            	 	    echo "<option value='全部' selected>全部</option>";
+			        	          if($result->num_rows > 0){
+			        	 	        while($row = $result->fetch_assoc()){
+			        	 	       	echo "<option value=\"".$row['分项工程']."\">".$row['分项工程']."</option>";
+			        	     	}
+			        	     }
+			        	          echo "</select>";
+//			        	 $conn->close();
+			                   ?>
+													
+			                    &nbsp;&nbsp;
+			                    <input  type="button" id="query" name="query" value="查询" style="height: 30px;"/>	
+		                  </form>
 										</div>
+										
 										<input type="text" class="hidden" id="wxyid" value="" />
 										<!--<input type="text" class="hidden" id="wxystr" value="" />-->
 										<div class="tab-content">
@@ -220,7 +257,7 @@
 											         <th>操作</th>
 											      </tr>
 								  		 		</thead>
-									   			<tbody style="text-align:center;">
+									   			<tbody style="text-align:center;" id="tt">
 									      		<?php
 															$id=$_GET["id"];
 		               						$sql = "select * from 危险源   where 工程id='$id'";
@@ -239,7 +276,7 @@
 						                <td><?php echo $row["风险等级"];?></td>
 						                <td><?php echo $row["登记日期"];?></td>
 						                <td><?php echo $row["危险源状态"];?></td>
-										        <td><a href="aqxcxg.php?id=<?php echo $row["id"];?>&yhid=<?php $yhid=$_GET["yhid"];echo $yhid;?>"><button type="button" class="btn btn-primary">修改</button></a> 
+										        <td><button id="<?php echo $row["id"];?>" onclick="xiugai(this.id);" data-toggle="modal" data-target="#myModal1" type="button" class="btn btn-primary">修改</button>
 										        	<button id="<?php echo $row["id"];?>" onclick="dianji2(this.id);" type="button" class="btn btn-default">
                    	 						删除
                    	 					</button>
@@ -259,7 +296,7 @@
 									<div class="modal-dialog" style="width: 800px;">
 										<div class="modal-content">
 											<div class="modal-header">
-												<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+												<button type="button" class="close" onclick="window.location.reload()" data-dismiss="modal" aria-hidden="true">
 													&times;
 												</button>
 												<h4 class="modal-title" id="myModalLabel">危险源详细填写</h4>
@@ -286,11 +323,14 @@
 																	} 
 																?>
 														</div>
-														<div class="col-sm-4 width150">
+														<div id="div1" class="col-sm-4 width150" style="display: none;">
 															<input type="text" id="wxylx" name="wxylx" placeholder="请选择危险源类型" readonly>
 															
 															<ul id="selWxy" class="hide">
 															</ul>
+														</div>
+														<div id="div2" class="col-sm-4 width150" style="display: block;">
+															<input type="text" id="wxylxInput" readonly="readonly" disabled="disabled">
 														</div>
 													</div>
 													<div class="bottom">
@@ -345,12 +385,12 @@
 														<div class="form-group">
 															<label for="zrr" class="col-sm-3 control-label">责任人：</label>
 															<div class="col-sm-3">
-																<input type="text" class="form-control" name="zrr" placeholder="" >
+																<input type="text" class="form-control" id="zrr" name="zrr" placeholder="" >
 															</div>
 								
 															<label for="lxdh" class="col-sm-3 control-label">联系电话：</label>
 															<div class="col-sm-3">
-																<input type="text" class="form-control"  name="lxdh" placeholder="" >
+																<input type="text" class="form-control" id="lxdh" name="lxdh" placeholder="" >
 															</div>
 														</div>
 														
@@ -379,11 +419,15 @@
 														<div class="form-group">
 																
 																<input type="button" class="col-sm-3" style="margin-left: 150px;" value="标注危险源" onclick="window.open('marker.php')"/>
-																<input type="text" class="hidden" value="" id="jwd" name="jwd" readonly="readonly" />
+																<input type="text"  value="" id="jwd" name="jwd" style="display: none;" readonly="readonly" />
 														</div>
+														<input type="text"  value="" id="ww" name="ww" class="hide"  />
+														<input type="text"  id="flg" name="flg" value="" class="hide"/>
+														<input type="text"  id="fxid" name="fxid" class="hide" value=""/>
 	                        <div class="modal-footer" >
-														<button type="button" class="btn btn-default " data-dismiss="modal">关闭 </button>
-														<button id="save10" type="button" onclick="window.location.reload()" class="btn btn-primary ">提交保存</button>
+														<button type="button" id="guanbi" class="btn btn-default " onclick="window.location.reload()" data-dismiss="modal">关闭 </button>
+														<button id="save10" type="button" onclick="window.location.reload()" class="btn btn-primary ">提交保存</button> 
+														<button id="save11" type="button"  onclick="window.location.reload()" style="display: none;" class="btn btn-primary ">保存</button>
 													</div>
 												</div>
                         </form>
@@ -595,7 +639,8 @@
     	
     	function dianji2(id){
 //							alert(id);
-					$.ajax({
+          if(confirm('是否确认删除该工程？')){
+          	$.ajax({
 	        cache: true,
 	        type: "POST",
 	        url:'wxysc.php',
@@ -611,6 +656,8 @@
 	            window.location.reload();
 	        }
 	    	}); 
+          }
+					
 			};		
  				
  					
@@ -632,6 +679,181 @@
 				okfun:function(val){alert(val)}
 			})
 
+
+      function xiugai(id){
+//    	$('#div1').css('display','none');
+//				$('#div2').css('display','block');
+        $('#div1').css('display','none');
+        $('#div2').css('display','block')
+				$("#save11").css('display','block');
+				$("#save10").css('display','none');
+//    	alert(id)
+        var wxylx2 = document.getElementById("wxylxInput");
+        var select_wxy = document.getElementById("select_wxy");
+        var fxdj = document.getElementById("fxdj");
+        var djtime = document.getElementById("djtime");
+        var kwsd = document.getElementById("kwsd");
+        var wxyzt = document.getElementById("wxyzt");
+        var zrr = document.getElementById("zrr");
+        var lxdh = document.getElementById("lxdh");
+        var wxymc = document.getElementById("wxymc");
+        var bzbw = document.getElementById("bzbw");
+        var startdata = document.getElementById("startdata");
+        var enddata = document.getElementById("enddata");
+        var ww = document.getElementById("ww");
+        var flg =document.getElementById("flg");
+        var jwd =document.getElementById("jwd");
+        var fxid =document.getElementById("fxid");
+        fxid.value = id
+        flg.value = "xiugai";
+       	$.ajax({
+      		type:"post",
+      		url:'aqxcxgbc.php',
+      		async:false,
+      		dataType:"json",
+      		data:{
+      			id:id,
+//    			flag:"xiugai"
+      		},
+      		success:function(data){
+//    			alert(wxylx2.value)
+//          $('#wxylx').val(data.危险源类型)
+      			select_wxy.value = data.风险项个数;
+      			wxylx2.value = data.危险源类型;
+            fxdj.value = data.风险等级;
+            djtime.value = data.登记日期;
+            kwsd.value = data.使用状态;
+            wxyzt.value = data.危险源状态;
+            zrr.value = data.责任人;
+            lxdh.value = data.责任人联系电话;
+            wxymc.value = data.危险源名称;
+            bzbw.value = data.标注部位;
+            startdata.value = data.开始日期;
+            enddata.value = data.结束日期;
+//          window.location.reload();
+            ww.value = data.id;
+            jwd.value = data.经纬度;
+      		}
+      	});
+      }
+      
+//    $("#wxylxInput").click(function(){
+////    	$("#wxylxInput").toggleClass("hide");
+////    	$("#selWxy3").toggleClass("selWxy3");
+////				$('#div1').style.display="block";
+////				$('#div2').css('display','none')
+////				$('#div1').css('display','block')
+//    })
+      
+      $("#xinjian").click(function(){
+      	    $('#div2').css('display','none');
+      	    $('#div1').css('display','block')
+           	$("#save11").css('display','none');
+			  	  $("#save10").css('display','block');
+//				  window.location.reload();
+            var wxylx = document.getElementById("wxylxInput");
+            var select_wxy = document.getElementById("select_wxy");
+            var fxdj = document.getElementById("fxdj");
+            var djtime = document.getElementById("djtime");
+            var kwsd = document.getElementById("kwsd");
+            var wxyzt = document.getElementById("wxyzt");
+            var zrr = document.getElementById("zrr");
+            var lxdh = document.getElementById("lxdh");
+            var wxymc = document.getElementById("wxymc");
+            var bzbw = document.getElementById("bzbw");
+            var startdata = document.getElementById("startdata");
+            var enddata = document.getElementById("enddata");
+            select_wxy.value = "";
+      			wxylx.value = "";
+            fxdj.value = "";
+            djtime.value = "";
+            kwsd.value = "";
+            wxyzt.value = "";
+            zrr.value = "";
+            lxdh.value = "";
+            wxymc.value = "";
+            bzbw.value = "";
+            startdata.value = "";
+            enddata.value = "";
+      })
+      
+      $("#save11").click(function(){ 
+				$.ajax({
+	        cache: true,
+	        type: "POST",
+	        url:'xgbc.php',
+	        data:$('#aqxcform').serialize(),// 你的formid
+	        
+//	        alert(data)
+	        async: false,
+	        error: function(request) {
+	            alert("Connection error");
+	        },
+	        success: function(data) {
+	            alert("修改成功");
+	        }
+	    	});
+			});
+			
+			$("#query").click(function(){
+//				alert(1)
+          var wxylbcx = document.getElementById("classname").value;
+          var gcmc = document.getElementById("gcmc").value;
+//        alert(gcmc)
+          if(wxylbcx=="全部"){
+          	window.location.reload();
+          	return;
+          }
+          $("#tt tr").remove();
+          $.ajax({
+          	type:"POST",
+          	url:"search.php",
+          	async:true,
+          	dataType:"json",
+          	data:{
+          		wxylbcx:wxylbcx,
+          		gcmc:gcmc
+          	},
+          	success:function(data){
+//        		console.log(data.id.length);
+//        		console.log(data["风险等级"]);
+              if(data["id"]==0){
+              	alert("此危险源暂无数据！")
+              }
+              for(var i=0;i<data.id.length;i++){
+              var id = data["id"][i];
+//            console.log(data["风险等级"][i]);
+//            var wxylx = data["危险源类型"][i];
+              var wxylx = data["危险源类型"][i];
+              var fxxgs = data["风险项个数"][i];
+              var fxdj = data["风险等级"][i];
+              var djrq = data["登记日期"][i];
+              var syzt = data["使用状态"][i];
+              var wxyzt = data["危险源状态"][i];
+              var zrr = data["责任人"][i];
+              var zrrlxdh = data["责任人联系电话"][i];
+              var wxymc = data["危险源名称"][i];
+              var bzbw = data["标注部位"][i];
+              var ksrq = data["开始日期"][i];
+              var jsrq = data["结束日期"][i];
+              var jwd = data["经纬度"][i];
+//            var id = id.split(",");
+//            console.log(id[1])
+//            var arr = new Array();
+//            arr = .split(',');
+//            for(var i=0;i<data.length;i++){
+//            	console.log(id[i]);
+//            }
+              var str = "";
+              var str = '<tr>'+'<td><input type="checkbox"/></td>'  + '<td>'+wxylx+'</td>' + '<td>'+bzbw+'</td>' + '<td>'+fxxgs+'</td>' + '<td>'+jsrq+'</td>' +'<td>'+zrr+'</td>' +'<td>'+zrrlxdh+'</td>' +'<td>'+fxdj+'</td>' +'<td>'+djrq+'</td>' +'<td>'+syzt+'</td>' + '<td><button id="'+id+'" onclick="xiugai(this.id);" data-toggle="modal" data-target="#myModal1" type="button" class="btn btn-primary">修改</button><button id="'+id+'" onclick="dianji2(this.id);" type="button" class="btn btn-default">删除</button></td>' +'</tr>';
+              $("#tt").append(str);
+              
+              }
+//           window.location.reload();
+              
+          	}
+          });
+			})
    	</script>
   </body>
 </html>
